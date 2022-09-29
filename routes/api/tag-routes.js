@@ -1,5 +1,4 @@
 const router = require('express').Router();
-const { FOUND_ROWS } = require('mysql2/lib/constants/client');
 const { Tag, Product, ProductTag } = require('../../models');
 
 // The `/api/tags` endpoint
@@ -7,11 +6,12 @@ const { Tag, Product, ProductTag } = require('../../models');
 router.get('/', (req, res) => {
   // find all tags
   // be sure to include its associated Product data
-  Tag.findAll(req.body,{
-    // attributes: req.body,
+  Tag.findAll({
+    attributes: req.body,
     include: [
       {
         model: Product,
+        through: ProductTag,
         through: {attributes: []}
       }
     ]
@@ -26,7 +26,8 @@ router.get('/', (req, res) => {
 router.get('/:id', (req, res) => {
   // find a single tag by its `id`
   // be sure to include its associated Product data
-  Tag.findOne(req.body,{
+  Tag.findOne({
+    attributes:req.body,
     where: {
       id:req.params.id
     },
